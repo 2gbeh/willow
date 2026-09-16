@@ -48,6 +48,9 @@ pip install -r requirements.txt
 ### Build the Docker image
 
 ```sh
+docker build -t worker-basic:local .
+
+# Faster: Disable Provenance (build metadata) & SBOM (Software Bill of Materials)
 docker build --provenance=false --sbom=false -t willow:local .
 ```
 
@@ -63,10 +66,10 @@ docker run --rm willow:local
 
 1. Tag and push the image to Docker Hub:
 
-   ```sh
-   docker tag willow:local 2gbeh/willow:latest
-   docker push 2gbeh/willow:latest
-   ```
+```sh
+docker tag willow:local 2gbeh/willow:latest
+docker push 2gbeh/willow:latest
+```
 
 2. On the [RunPod Console](https://www.runpod.io/console/serverless), create a new Serverless Endpoint pointing to `2gbeh/willow:latest`.
 3. Set required environment variables (see below).
