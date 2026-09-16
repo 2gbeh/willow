@@ -64,11 +64,11 @@ docker run --rm willow:local
 1. Tag and push the image to Docker Hub:
 
    ```sh
-   docker tag willow:local 2gbeh/runpod:latest
-   docker push 2gbeh/runpod:latest
+   docker tag willow:local 2gbeh/willow:latest
+   docker push 2gbeh/willow:latest
    ```
 
-2. On the [RunPod Console](https://www.runpod.io/console/serverless), create a new Serverless Endpoint pointing to `2gbeh/runpod:latest`.
+2. On the [RunPod Console](https://www.runpod.io/console/serverless), create a new Serverless Endpoint pointing to `2gbeh/willow:latest`.
 3. Set required environment variables (see below).
 4. Deploy and note the generated endpoint URL + API key.
 
