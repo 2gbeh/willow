@@ -1,35 +1,122 @@
-# Worker Basic
+# Willow
 
-This is a minimal serverless worker example. You can use the provided code to build a Docker image and deploy it as a serverless endpoint. When a request is sent to the endpoint, a worker spins up and executes the rp_handler.py script. You can replace the sleep function with any machine learning task, such as image generation, text generation, or speech-to-text conversion.
+⚠️ **WIP :** RunPod Serverless Endpoint — AI image generation using [FLUX.1-dev](https://huggingface.co/black-forest-labs/FLUX.1-dev)
 
-## To test this code locally:
+## Overview
 
-```
-# 1. Create a Python virtual environment
-python3 -m venv venv
+Willow is a serverless worker that generates images from text prompts using Black Forest Labs' FLUX.1-dev model, deployed on RunPod's serverless GPU platform.
 
-# 2. Activate the virtual environment
-# On macOS/Linux:
+- **Base image:** `python:3.10-slim`
+- **Runtime:** RunPod Serverless SDK (`runpod==1.7.12`)
+- **Model:** FLUX.1-dev (Hugging Face)
 
-source venv/bin/activate
-
-# On Windows:
-venv\Scripts\activate
-
-# 3. Install the RunPod SDK
-pip install runpod
-
-# 4. Run your script locally, the script will automatically read test_input.json as input, passing it to the handler function as an event
-python3 rp_handler.py
+## Project Structure
 
 ```
-
-## Build and Push Docker Image to a Container Registry (e.g., Docker Hub)
-
+willow/
+├── rp_handler.py       # Serverless request handler
+├── requirements.txt    # Python dependencies
+├── test_input.json     # Local test payload
+├── Dockerfile
+├── .dockerignore
+└── README.md
 ```
-# Build docker image
-docker build -t your-dockerhub-username/your-image-name:v1.0.0 --platform linux/amd64 .
 
-# Push docker image to docker hub
-docker push your-dockerhub-username/your-image-name:v1.0.0
+## Setup
+
+### Prerequisites
+
+- Docker
+- RunPod account + API key
+- Hugging Face access token (for model download)
+
+### Local Development
+
+Clone the repo:
+
+```sh
+git clone https://github.com/2gbeh/willow.git
+cd willow
 ```
+
+Install dependencies locally (optional, for non-Docker testing):
+
+```sh
+pip install -r requirements.txt
+```
+
+### Build the Docker image
+
+```sh
+docker build --provenance=false --sbom=false -t willow:local .
+```
+
+### Run locally
+
+The RunPod SDK automatically picks up `test_input.json` when run without an API server:
+
+```sh
+docker run --rm willow:local
+```
+
+## Deployment
+
+1. Tag and push the image to Docker Hub:
+
+   ```sh
+   docker tag willow:local 2gbeh/runpod:latest
+   docker push 2gbeh/runpod:latest
+   ```
+
+2. On the [RunPod Console](https://www.runpod.io/console/serverless), create a new Serverless Endpoint pointing to `2gbeh/runpod:latest`.
+3. Set required environment variables (see below).
+4. Deploy and note the generated endpoint URL + API key.
+
+## Environment Variables
+
+| Variable   | Description                                  | Default |
+| ---------- | -------------------------------------------- | ------- |
+| `HF_TOKEN` | Hugging Face access token for model download | —       |
+
+## API
+
+### Input
+
+```json
+{
+  "input": {
+    "prompt": "a red fox sitting in a snowy forest, cinematic lighting",
+    "width": 1024,
+    "height": 1024,
+    "num_inference_steps": 28
+  }
+}
+```
+
+### Output
+
+```json
+{
+  "output": {
+    "image": "<base64-encoded PNG>"
+  }
+}
+```
+
+### Testing the deployed endpoint
+
+```sh
+curl -X POST https://api.runpod.ai/v2/<endpoint-id>/runsync \
+  -H "Authorization: Bearer <RUNPOD_API_KEY>" \
+  -H "Content-Type: application/json" \
+  -d '{"input": {"prompt": "a red fox in a snowy forest"}}'
+```
+
+## Notes
+
+- Requires GPU runtime — FLUX.1-dev is compute-heavy and not runnable on CPU-only local builds.
+- Local Docker builds without a GPU are for handler/logic testing only, not full image generation.
+
+## License
+
+MIT

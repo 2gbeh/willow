@@ -1,0 +1,17 @@
+# .dockerignore
+.git
+.dockerignore
+Dockerfile
+__pycache__
+*.pyc
+venv
+models/
+.env
+.vscode
+.idea
+*.log
+.DS_Store
+Thumbs.db
+
+__ignore__/
+wip/
