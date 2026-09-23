@@ -1,6 +1,8 @@
 {
-    "input": {
-        "prompt": "Marcel Mcloy",
-        "seconds": 3
-    }
+  "input": {
+    "prompt": "a red fox sitting in a snowy forest, cinematic lighting",
+    "width": 512,
+    "height": 512,
+    "num_inference_steps": 28
+  }
 }

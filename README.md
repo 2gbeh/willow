@@ -42,6 +42,7 @@ cd willow
 Install dependencies locally (optional, for non-Docker testing):
 
 ```sh
+source venv/Scripts/activate
 pip install -r requirements.txt
 ```
 
@@ -60,6 +61,9 @@ The RunPod SDK automatically picks up `test_input.json` when run without an API 
 
 ```sh
 docker run --rm willow:local
+
+# Run with environment variables
+docker run --rm --env-file .env willow:local
 ```
 
 ## Deployment
@@ -109,7 +113,7 @@ docker push 2gbeh/willow:latest
 ### Testing the deployed endpoint
 
 ```sh
-curl -X POST https://api.runpod.ai/v2/<endpoint-id>/runsync \
+curl -X POST https://api.runpod.ai/v2/<endpoint-id>/run \
   -H "Authorization: Bearer <RUNPOD_API_KEY>" \
   -H "Content-Type: application/json" \
   -d '{"input": {"prompt": "a red fox in a snowy forest"}}'
